@@ -75,4 +75,26 @@ sub _no_folder_error {
     ));
 }
 
+###########################################################################
+
+=head2 EntryModifiedDate
+                                                                                                      
+Outputs the modification date of the current entry in context.
+See the L<Date> tag for supported attributes.
+                                                                                                      
+=for tags date
+
+=cut
+
+sub _hdlr_asset_mod_date {
+    my ($ctx, $args) = @_;
+    my $a = $ctx->stash('asset')
+        or return $ctx->_no_asset_error();
+    $args->{ts} = $a->modified_on || $a->created_on;
+    require MT::Template::ContextHandlers;
+    return MT::Template::ContextHandlers::_hdlr_date($ctx, $args);
+}
+
+###########################################################################
+
 1;

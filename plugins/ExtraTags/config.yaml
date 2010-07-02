@@ -3,9 +3,11 @@ key: Extra Tags
 description: A collection of extra template tags that might be helpful.
 author_name: Byrne Reese
 author_link: http://www.majordojo.com/
-version: 1.0
+version: 1.1
 
 tags:
     block:
         FolderHasPages?: $ExtraTags::ExtraTags::Plugin::tag_has_pages
         FolderHasIndex?: $ExtraTags::ExtraTags::Plugin::tag_has_index
+    function:
+        AssetModifiedDate: $ExtraTags::ExtraTags::Plugin::tag_asset_mod_date
