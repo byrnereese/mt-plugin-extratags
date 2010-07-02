@@ -86,13 +86,12 @@ See the L<Date> tag for supported attributes.
 
 =cut
 
-sub _hdlr_asset_mod_date {
+sub tag_asset_mod_date {
     my ($ctx, $args) = @_;
     my $a = $ctx->stash('asset')
         or return $ctx->_no_asset_error();
     $args->{ts} = $a->modified_on || $a->created_on;
-    require MT::Template::ContextHandlers;
-    return MT::Template::ContextHandlers::_hdlr_date($ctx, $args);
+    return MT::Template::Context::_hdlr_date($ctx, $args);
 }
 
 ###########################################################################

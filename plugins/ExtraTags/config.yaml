@@ -3,7 +3,7 @@ key: Extra Tags
 description: A collection of extra template tags that might be helpful.
 author_name: Byrne Reese
 author_link: http://www.majordojo.com/
-version: 1.1
+version: 1.1.1
 
 tags:
     block:
