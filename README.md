@@ -1,5 +1,21 @@
 This plugin provides Movable Type users with an assortment of miscellaneous tags that do not ship with Movable Type by default. These tags are:
 
+# Modifiers
+
+## `days_old`
+
+A template tag modifier designed for use with date strings. User is intended to use a date string formatted as a timestamp e.g. %Y%m%d%H%M%S. The tag will then output the number of days since the date in question.
+
+**Example**
+
+    <ul>
+    <mt:assets lastn="5">
+    <li><$mt:AssetLabel$> (<$mt:AssetModifiedDate format="%Y%m%d%H%M%S" days_old="1"$> days old)</li>
+    </mt:assets>
+    </ul>
+
+# Template Tags
+
 ## `<mt:FolderHasPages>`
 
 A container tag that evaluates to true if the current folder in context contains any published pages.

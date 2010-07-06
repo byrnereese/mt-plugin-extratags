@@ -2,6 +2,7 @@
 package ExtraTags::Plugin;
 
 use strict;
+use MT::Util qw( ts2epoch );
 
 ###########################################################################
 
@@ -92,6 +93,23 @@ sub tag_asset_mod_date {
         or return $ctx->_no_asset_error();
     $args->{ts} = $a->modified_on || $a->created_on;
     return MT::Template::Context::_hdlr_date($ctx, $args);
+}
+
+###########################################################################
+
+=head2 days_old
+                                                                                                      
+                                                                                                      
+=for tags date
+
+=cut
+
+sub mod_days_old {
+    my ($ts, $val, $ctx) = @_;
+    my $epoch = ts2epoch(undef,$ts);
+    my $now = time();
+    my $diff = $now - $epoch;
+    return int($diff / ( 60 * 60 * 24));
 }
 
 ###########################################################################
