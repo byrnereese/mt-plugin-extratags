@@ -29,7 +29,7 @@ sub tag_has_pages {
         join => MT::Placement->join_on( category_id => $c->id, { entry_id => \$clause }),
         );
 
-    my $count = MT::Page->count( undef , $args);
+    my $count = MT->model('page')->count( undef , $args);
     return $count > 0;
 }
 
@@ -98,7 +98,10 @@ sub tag_asset_mod_date {
 ###########################################################################
 
 =head2 days_old
-                                                                                                      
+
+A template tag modifier that transforms a date into an integer representing 
+the number of days from now (the time the tag was processed) and the tag 
+itself.
                                                                                                       
 =for tags date
 
@@ -113,5 +116,58 @@ sub mod_days_old {
 }
 
 ###########################################################################
+
+=head2 AssetEntries
+
+Iterates over the list of entries associated with the current asset in 
+context.
+
+B<Example:>
+
+The following will output thumbnails for all of the assets embedded in all
+of the entries on the system. Each thumbnail will be square and have a
+max height/width of 100 pixels.
+
+    <mt:Assets>
+        <mt:AssetEntries>
+            <$mt:EntryTitle$>
+        </mt:AssetEntries>
+    </mt:Assets>
+
+=for assets entry
+
+=cut
+
+sub tag_asset_entries {
+    my ($ctx, $args, $cond) = @_;
+    my $obj = $ctx->stash('asset')
+        or return $ctx->_no_asset_error();
+    
+    my $place_class = MT->model('objectasset');
+    my @places = $place_class->load({
+        blog_id => $obj->blog_id || 0,
+        asset_id => $obj->parent ? $obj->parent : $obj->id
+    });
+    my $res = '';
+    my $count = 0;
+    my $vars = $ctx->{__stash}{vars};
+    foreach my $place (@places) {
+        my $entry_class = MT->model($place->object_ds) or next;
+        next unless $entry_class->isa('MT::Entry');
+        my $entry = $entry_class->load($place->object_id)
+            or next;
+        local $vars->{'__first__'}   = ($count == 0);
+        local $vars->{'__last__'}    = ($count == $#places);
+        local $vars->{'__odd__'} = ($count % 2 ) == 1;
+        local $vars->{'__even__'} = ($count % 2 ) == 0;
+        local $vars->{'__counter__'} = ++$count;
+        local $ctx->{__stash}{'entry'} = $entry;
+        defined(my $out = $builder->build($ctx, $tokens, $cond))
+            or return $ctx->error($builder->errstr);
+        $res .= $out;
+    }
+    return _hdlr_pass_tokens_else(@_) unless $res eq '';
+    return $out;
+}
 
 1;
