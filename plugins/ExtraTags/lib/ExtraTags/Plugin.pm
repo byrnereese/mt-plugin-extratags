@@ -170,4 +170,39 @@ sub tag_asset_entries {
     return $out;
 }
 
+###########################################################################
+
+=head2 IsTopLevelFolder
+
+Evaluates contained template tags if the current folder in context is the 
+top most, root level folder on the system.
+
+This tag is important to differentiate between the tag "HasParentFolder"
+which returns false if the current folder in context is at the root level
+OR the first level.
+
+B<Example:>
+
+    <mt:Pages>
+        <mt:PageFolder>
+            <mt:IfTopLevelFolder>
+              <$mt:PageTitle$> is in the root folder.
+            </mt:IfTopLevelFolder>
+        </mt:PageFolder>
+    </mt:Pages>
+
+=for assets entry
+
+=cut
+
+sub tag_is_top_level {
+    my ($ctx, $args) = @_;
+    # Get the current category
+    defined (my $cat = MT::Template::Context::_get_category_context($ctx))
+        or return $ctx->error($ctx->errstr);
+    return $ctx->error("Could not find a category in current context.")
+        if ($cat eq '');
+    return $cat->parent == 0 ? 1 : 0;
+}
+
 1;
