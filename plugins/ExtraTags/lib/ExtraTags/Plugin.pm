@@ -6,6 +6,27 @@ use MT::Util qw( ts2epoch );
 
 ###########################################################################
 
+=head2 mt:AssetFileSize
+
+This returns the file size of the current asset in context.
+
+B<Attributes:>
+
+None.
+
+=for tags plugin, function, asset, size
+
+=cut
+
+sub tag_asset_size {
+    my ( $ctx, $args, $cond ) = @_;
+    my $asset = $ctx->stash('asset');
+    # TODO - error if no asset
+    return -s $asset->file_path;    
+}
+
+###########################################################################
+
 =head2 mt:FolderHasPages
 
 This template tag is a conditional block tag that is evaluated if the 
@@ -203,6 +224,37 @@ sub tag_is_top_level {
     return $ctx->error("Could not find a category in current context.")
         if ($cat eq '');
     return $cat->parent == 0 ? 1 : 0;
+}
+
+###########################################################################
+
+=head2 nice_size
+
+Transforms an integer into a nicely formated file size, automatically selecting
+kB, MB, GB, etc accordingly. You can pass in, as a value to the modifier, the
+precision you would like to use (expressed as the number of decimal places)
+for outputted number/file size.
+
+B<Example:>
+
+    <$mt:AssetFileSize nice_size="2"$>
+
+=for tags 
+
+=cut
+
+sub mod_nice_size {
+    # Will work up to considerable file sizes!
+    my $fs = $_[0] || 0; # First variable is the size in bytes
+    my $dp = $_[1] || 0; # Number of decimal places required
+    my @units = ('bytes','kB','MB','GB','TB','PB','EB','ZB','YB');
+    my $u = 0;
+    $dp = ($dp > 0) ? 10**$dp : 1;
+    while($fs > 1024){
+        $fs /= 1024;
+        $u++;
+    }
+    if($units[$u]){ return (int($fs*$dp)/$dp)." ".$units[$u]; } else{ return int($_[0]); }
 }
 
 1;

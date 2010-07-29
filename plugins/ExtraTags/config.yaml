@@ -3,7 +3,7 @@ key: Extra Tags
 description: A collection of extra template tags that might be helpful.
 author_name: Byrne Reese
 author_link: http://www.majordojo.com/
-version: 1.4
+version: 1.5
 
 tags:
   block:
@@ -13,6 +13,9 @@ tags:
     IsTopLevelFolder?: $ExtraTags::ExtraTags::Plugin::tag_is_top_level
   function:
     AssetModifiedDate: $ExtraTags::ExtraTags::Plugin::tag_asset_mod_date
+    AssetFileSize: $ExtraTags::ExtraTags::Plugin::tag_asset_size
   modifier:
     days_old: 
       handler: $ExtraTags::ExtraTags::Plugin::mod_days_old
+    nice_size: 
+      handler: $ExtraTags::ExtraTags::Plugin::mod_nice_size
